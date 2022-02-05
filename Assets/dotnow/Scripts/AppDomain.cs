@@ -29,6 +29,10 @@ namespace dotnow
         internal Thread mainThread = null;
 
         // Private
+        private static List<AppDomain> activeDomains = new List<AppDomain>();
+        private static AppDomain active = null;
+        
+        private string name = null;
         private Bindings bindings = null;
         private ExecutionEngine engine = null;
         private Dictionary<Thread, CLRThreadContext> threadEngines = new Dictionary<Thread, CLRThreadContext>();
@@ -47,6 +51,16 @@ namespace dotnow
 
         private const BindingFlags memberFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.ExactBinding;
 
+        public static AppDomain Active
+        {
+            get { return active; }
+        }
+        
+        public string Name
+        {
+            get { return name; }
+        }
+        
         // Properties
         public bool IsDisposed
         {
@@ -54,10 +68,11 @@ namespace dotnow
         }
 
         // Constructor
-        public AppDomain()
+        public AppDomain(string name = "InterpretedAppDomain", bool makeActiveDomain = true)
         {
             this.mainThread = Thread.CurrentThread;
             this.engine = new ExecutionEngine(mainThread);
+            this.name = name;
 
             // Initialize bindings
             bindings = new Bindings(this);
@@ -68,6 +83,13 @@ namespace dotnow
             RuntimeHelpers.PrepareMethod(method.MethodHandle);
 #endif
 
+            //Add active domain
+            activeDomains.Add(this);
+            
+            // Make domain active
+            if (makeActiveDomain == true)
+                MakeDomainActive(this);
+            
             // Trigger domain create
             if(OnDomainCreated != null)
                 OnDomainCreated.Invoke(this);
@@ -86,6 +108,9 @@ namespace dotnow
             // Destroy any running threads
             foreach (CLRThreadContext context in threadEngines.Values)
                 DestroyThreadExecutionContext(context);
+            
+            // Remove from active list
+            activeDomains.Remove(this);
 
             // Release memory
             threadEngines = null;
@@ -140,7 +165,7 @@ namespace dotnow
             }
 
             return engine;
-        }        
+        }
 
         #region LoadModule
         public CLRModule LoadModuleStream(Stream input, bool keepOpen, bool optimizeOnLoad = true)
@@ -1426,5 +1451,37 @@ namespace dotnow
             throw new NotImplementedException();
         }
 #endregion
+        
+        public static AppDomain FindDomain(string domainName)
+        {
+            foreach(AppDomain domain in activeDomains)
+            {
+                if (domain.name == domainName)
+                    return domain;
+            }
+
+            // Domain not found
+            return null;
+        }
+        
+        public static void MakeDomainActive(AppDomain domain)
+        {
+            // Check for null domain
+            if (domain == null)
+                throw new ArgumentNullException(nameof(domain));
+
+            // Make active
+            active = domain;
+        }
+        
+        public static void MakeDomainActive(string domainName)
+        {
+            // Find domain with name
+            AppDomain domain = FindDomain(domainName);
+
+            // Make active
+            if (domain != null)
+                MakeDomainActive(domain);
+        }
     }
 }

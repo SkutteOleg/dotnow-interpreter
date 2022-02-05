@@ -5,5 +5,6 @@ namespace dotnow.Interop
     {
         // Methods
         void InitializeProxy(AppDomain domain, CLRInstance instance);
+        CLRInstance GetInstance();
     }
 }

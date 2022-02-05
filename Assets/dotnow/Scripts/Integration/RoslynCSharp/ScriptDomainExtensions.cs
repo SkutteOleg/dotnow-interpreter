@@ -231,7 +231,7 @@ namespace RoslynCSharp
                 return result;
 
             // Create a new domain
-            result = new AppDomain();
+            result = new AppDomain(domain.Name);
 
             // Register domain
             clrDomains.Add(domain, result);
