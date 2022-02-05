@@ -152,7 +152,7 @@ public class MonoBehaviourProxyEditor : Editor
             else
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.ObjectField(name, null, type.IsCLRType() ? typeof(object) : type, false);
+                EditorGUILayout.ObjectField(name, null, type.IsCLRType() ? typeof(CLRType) : type, false);
 
                 if (GUILayout.Button("Initialize field"))
                 {
@@ -160,9 +160,8 @@ public class MonoBehaviourProxyEditor : Editor
                     {
                         value = type.IsCLRType() ? AppDomain.Active.CreateInstance((CLRType) type) : Activator.CreateInstance(type);
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        Debug.Log(string.Format("{0}\n{1}", e.Message, e.StackTrace));
                         value = FormatterServices.GetUninitializedObject(type);
                     }
                 }
