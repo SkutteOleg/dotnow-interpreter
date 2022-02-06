@@ -59,10 +59,17 @@ public class TestClass : MonoBehaviour {
         {
             foreach (var field in obj.Type.GetFields())
             {
+                
+                //Ignoring interpreted types for now.
+                //TODO - handle CLR types
+                if (field.FieldType.IsCLRType())
+                    continue;
+                
                 if (!_state.ContainsKey(field.Name))
                     continue;
-
-                field.SetValue(obj, _state[field.Name]);
+                
+                if (field.FieldType.IsInstanceOfType(_state[field.Name]))
+                    field.SetValue(obj, _state[field.Name]);
             }
         }
     }
