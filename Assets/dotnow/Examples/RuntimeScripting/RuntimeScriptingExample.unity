@@ -236,12 +236,12 @@ MonoBehaviour:
   cSharpSource: "using UnityEngine;\r\nusing System.Collections.Generic;\n\r\npublic
     class TestClass : MonoBehaviour {\r\n\r\n\tpublic bool boolTest;\n\tpublic string
     stringTest;\n\tpublic int intTest;\n\tpublic Vector3 vector3Test;\n\tpublic Quaternion
-    quaternionTest;\n\tpublic GameObject gameObjectTest;\n\tpublic GameObject[] arrayTest;\n\tList<List<List<List<List<GameObject>>>>>
-    nestedListTest;\n\t\n\tpublic class Class\n\t{\n\t\tpublic bool boolTest;\n\t\tpublic
-    string stringTest;\n\t\tpublic int intTest;\n\t\tpublic Vector3 vector3Test;\n\t\tpublic
-    Quaternion quaternionTest;\n\t\tpublic GameObject gameObjectTest;\n\t\tpublic
-    GameObject[] arrayTest;\n\t\tList<List<List<List<List<GameObject>>>>> nestedListTest;\n\t}
-    \n\n\tpublic Class classTest;\n\n\tpublic class RecursiveClass\n\t{\n\t\tpublic
+    quaternionTest;\n\tpublic GameObject gameObjectTest;\n\tpublic GameObject[] arrayTest;\n\tpublic
+    List<List<List<List<List<GameObject>>>>> nestedListTest;\n\t\n\tpublic class
+    Class\n\t{\n\t\tpublic bool boolTest;\n\t\tpublic string stringTest;\n\t\tpublic
+    int intTest;\n\t\tpublic Vector3 vector3Test;\n\t\tpublic Quaternion quaternionTest;\n\t\tpublic
+    GameObject gameObjectTest;\n\t\tpublic GameObject[] arrayTest;\n\t\tpublic List<List<List<List<List<GameObject>>>>>
+    nestedListTest;\n\t} \n\n\tpublic Class classTest;\n\n\tpublic class RecursiveClass\n\t{\n\t\tpublic
     RecursiveClass child;\n\t}\n\n\tpublic RecursiveClass recursiveClassTest;\n}"
 --- !u!4 &741331245
 Transform:

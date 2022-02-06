@@ -38,37 +38,65 @@ public class TestClass : MonoBehaviour {
             {
                 if (activeScript != null)
                 {
-                    SaveState(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
+                    SaveStateRecursively(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
                     DestroyImmediate(activeScript.GetInstanceAs<MonoBehaviour>(false));
                 }
 
                 activeScript = type.CreateInstance(gameObject);
-                LoadState(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
+                LoadStateRecursively(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
             }
         }
 
+        private string _path;
         private Dictionary<string, object> _state = new Dictionary<string, object>();
 
-        private void SaveState(CLRInstance obj)
+        private bool SaveStateRecursively(CLRInstance obj)
         {
+            if (obj == null)
+                return false;
+            
             foreach (var field in obj.Type.GetFields())
-                _state[field.Name] = field.GetValue(obj);
+            {
+                string oldPath = _path;
+                _path += string.Format(".{0}", field.Name);
+
+                if (field.FieldType.IsCLRType())
+                    _state[_path] = SaveStateRecursively((CLRInstance) field.GetValue(obj));
+                else
+                    _state[_path] = field.GetValue(obj);
+
+                _path = oldPath;
+            }
+
+            return true;
         }
 
-        private void LoadState(CLRInstance obj)
+        private void LoadStateRecursively(CLRInstance obj)
         {
             foreach (var field in obj.Type.GetFields())
             {
-                //Ignoring interpreted types for now.
-                //TODO - handle CLR types
+                string oldPath = _path;
+                _path += string.Format(".{0}", field.Name);
+                
+                if (!_state.ContainsKey(_path))
+                {
+                    _path = oldPath;
+                    continue;
+                }
+
                 if (field.FieldType.IsCLRType())
-                    continue;
-                
-                if (!_state.ContainsKey(field.Name))
-                    continue;
-                
-                if (field.FieldType.IsInstanceOfType(_state[field.Name]))
-                    field.SetValue(obj, _state[field.Name]);
+                {
+                    if ((bool) _state[_path])
+                    {
+                        CLRInstance instance = (CLRInstance) AppDomain.Active.CreateInstance((CLRType) field.FieldType);
+                        field.SetValue(obj, instance);
+                        LoadStateRecursively(instance);
+                    }
+                }
+                else if (field.FieldType.IsInstanceOfType(_state[_path]))
+                    field.SetValue(obj, _state[_path]);
+
+                _path = oldPath;
             }
         }
     }
