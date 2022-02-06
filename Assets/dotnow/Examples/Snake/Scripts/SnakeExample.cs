@@ -47,15 +47,22 @@ namespace dotnow.Examples
             // Add component - cannot use 'gameObject.AddComponent' because it would crash the engine.
             MonoBehaviourProxy.AddComponentOverride(domain, null, gameObject, new object[] { mainType });
 
-            // Hack to prevent code stripping of required method - a more permanent fix is required!
-            Instantiate<GameObject>(null);
-            Instantiate<GameObject>(null, Vector3.zero, Quaternion.identity);
-            Instantiate<GameObject>(null, Vector3.zero, Quaternion.identity, null);
-            Vector2Int.RoundToInt(default(Vector2Int));
+            try
+            {
+                // Hack to prevent code stripping of required method - a more permanent fix is required!
+                Instantiate<GameObject>(null);
+                Instantiate<GameObject>(null, Vector3.zero, Quaternion.identity);
+                Instantiate<GameObject>(null, Vector3.zero, Quaternion.identity, null);
+                Vector2Int.RoundToInt(default(Vector2Int));
 
-            // Hack to force AOT compilation of generic type with specific generic argument which is required by the game a more permanent fix is required!
-            // Perhaps use List<object> in such cases for support for non-compiled AOT generics
-            List<Vector2Int> dummyList = new List<Vector2Int>();
+                // Hack to force AOT compilation of generic type with specific generic argument which is required by the game a more permanent fix is required!
+                // Perhaps use List<object> in such cases for support for non-compiled AOT generics
+                List<Vector2Int> dummyList = new List<Vector2Int>();
+            }
+            catch
+            {
+                //
+            }
         }
     }
 }

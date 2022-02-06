@@ -2,8 +2,8 @@
     "name": "dotnow",
     "rootNamespace": "",
     "references": [
-        "GUID:82ccc7faf9a0ce8478430010c631dc89",
-        "GUID:842c85e8e7f0d24438e45dd7e05434da"
+        "RoslynCSharp",
+        "RoslynCSharp.Compiler"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
