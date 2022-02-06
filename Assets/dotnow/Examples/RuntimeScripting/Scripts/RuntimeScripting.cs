@@ -44,6 +44,7 @@ public class TestClass : MonoBehaviour {
 
                 activeScript = type.CreateInstance(gameObject);
                 LoadStateRecursively(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
+                _state.Clear();
             }
         }
 
