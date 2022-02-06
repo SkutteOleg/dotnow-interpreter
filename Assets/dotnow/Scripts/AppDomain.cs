@@ -1468,7 +1468,7 @@ namespace dotnow
         {
             // Check for null domain
             if (domain == null)
-                throw new ArgumentNullException(nameof(domain));
+                throw new ArgumentNullException("domain");
 
             // Make active
             active = domain;
