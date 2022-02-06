@@ -54,6 +54,11 @@ namespace UnityEngine
             OnEnable();
         }
 
+        public CLRInstance GetInstance()
+        {
+            return instance;
+        }
+    
         public void Awake()
         {
             // When Unity calls this method, we have not yet had chance to 'InitializeProxy'. This method will be called manually when ready.
