@@ -1,4 +1,6 @@
 ﻿#if ROSLYNCSHARP
+using System.Collections.Generic;
+using dotnow;
 using UnityEngine;
 
 namespace RoslynCSharp.Example
@@ -15,10 +17,10 @@ namespace RoslynCSharp.Example
 
 public class TestClass : MonoBehaviour {
 
-    void Start()
-    {        
+	void Start()
+	{        
 
-    }
+	}
 }";
 
         public void Start()
@@ -35,9 +37,32 @@ public class TestClass : MonoBehaviour {
             if (type != null)
             {
                 if (activeScript != null)
+                {
+                    SaveState(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
                     DestroyImmediate(activeScript.GetInstanceAs<MonoBehaviour>(false));
-                
+                }
+
                 activeScript = type.CreateInstance(gameObject);
+                LoadState(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
+            }
+        }
+
+        private Dictionary<string, object> _state = new Dictionary<string, object>();
+
+        private void SaveState(CLRInstance obj)
+        {
+            foreach (var field in obj.Type.GetFields())
+                _state[field.Name] = field.GetValue(obj);
+        }
+
+        private void LoadState(CLRInstance obj)
+        {
+            foreach (var field in obj.Type.GetFields())
+            {
+                if (!_state.ContainsKey(field.Name))
+                    continue;
+
+                field.SetValue(obj, _state[field.Name]);
             }
         }
     }
