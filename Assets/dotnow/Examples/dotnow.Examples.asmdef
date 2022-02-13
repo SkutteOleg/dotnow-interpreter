@@ -1,7 +1,7 @@
 {
     "name": "dotnow.Examples",
     "references": [
-        "GUID:f656afbb727c4e8418169dff952bc121"
+        "dotnow"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

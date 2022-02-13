@@ -13,13 +13,22 @@ namespace System.Collections.Generic
         {
             get
             {
-                return instance.Type.GetMethod("System.Collections.Generic.IEnumerator<System.Object>.get_Current")?.Invoke(instance, null);
+#if API_NET35
+                return instance.Type.GetMethod("System.Collections.Generic.IEnumerator<System.Object>.get_Current") != null ? instance.Type.GetMethod("System.Collections.Generic.IEnumerator<System.Object>.get_Current").Invoke(instance, null) : null;
+#else
+                instance.Type.GetMethod("System.Collections.Generic.IEnumerator<System.Object>.get_Current")?.Invoke(instance, null);
+#endif
             }
         }
 
         public void Dispose()
         {
+#if API_NET35
+            if (instance.Type.GetMethod("Dispose") != null)
+                instance.Type.GetMethod("Dispose").Invoke(instance, null);
+#else
             instance.Type.GetMethod("Dispose")?.Invoke(instance, null);
+#endif
         }
 
         public void InitializeProxy(dotnow.AppDomain domain, CLRInstance instance)
@@ -34,12 +43,21 @@ namespace System.Collections.Generic
 
         public bool MoveNext()
         {
-            return (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null);
+#if API_NET35
+            return instance.Type.GetMethod("MoveNext") != null ? (bool)instance.Type.GetMethod("MoveNext").Invoke(instance, null) : true;
+#else
+            (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null);
+#endif
         }
 
         public void Reset()
         {
+#if API_NET35
+            if (instance.Type.GetMethod("Reset") != null)
+                instance.Type.GetMethod("Reset").Invoke(instance, null);
+#else
             instance.Type.GetMethod("Reset")?.Invoke(instance, null);
+#endif
         }
     }
 }

@@ -11,7 +11,12 @@ namespace System
 
         public void Dispose()
         {
+#if API_NET35
+            if (instance.Type.GetMethod("Dispose") != null)
+                instance.Type.GetMethod("Dispose").Invoke(instance, null);
+#else
             instance.Type.GetMethod("Dispose")?.Invoke(instance, null);
+#endif
         }
 
         public void InitializeProxy(dotnow.AppDomain domain, CLRInstance instance)

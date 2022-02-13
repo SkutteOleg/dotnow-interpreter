@@ -13,7 +13,11 @@ namespace System.Collections
         {
             get
             {
-                return instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current")?.Invoke(instance, null);
+#if API_NET35
+                return instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current") != null ? instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current").Invoke(instance, null) : null;
+#else
+                instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current")?.Invoke(instance, null)
+#endif
             }
         }
 
@@ -29,12 +33,21 @@ namespace System.Collections
 
         public bool MoveNext()
         {
-            return (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null);
+#if API_NET35
+            return instance.Type.GetMethod("MoveNext") != null ? (bool)instance.Type.GetMethod("MoveNext").Invoke(instance, null) : true;
+#else
+            (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null)
+#endif
         }
 
         public void Reset()
         {
+#if API_NET35
+            if (instance.Type.GetMethod("Reset") != null)
+                instance.Type.GetMethod("Reset").Invoke(instance, null);
+#else
             instance.Type.GetMethod("Reset")?.Invoke(instance, null);
+#endif
         }
     }
 }
