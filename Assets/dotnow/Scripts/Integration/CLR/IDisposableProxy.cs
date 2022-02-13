@@ -18,5 +18,10 @@ namespace System
         {
             this.instance = instance;
         }
+
+        public CLRInstance GetInstance()
+        {
+            return instance;
+        }
     }
 }

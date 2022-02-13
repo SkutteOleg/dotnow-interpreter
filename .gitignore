@@ -70,6 +70,5 @@ sysinfo.txt
 crashlytics-build.properties
 
 #
-/Packages/
 .idea/
 /UserSettings/

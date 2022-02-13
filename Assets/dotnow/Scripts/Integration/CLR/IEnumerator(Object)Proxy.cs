@@ -27,6 +27,11 @@ namespace System.Collections.Generic
             this.instance = instance;
         }
 
+        public CLRInstance GetInstance()
+        {
+            return instance;
+        }
+
         public bool MoveNext()
         {
             return (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null);
