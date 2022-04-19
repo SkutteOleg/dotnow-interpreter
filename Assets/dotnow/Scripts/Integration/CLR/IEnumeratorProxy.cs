@@ -16,7 +16,7 @@ namespace System.Collections
 #if API_NET35
                 return instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current") != null ? instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current").Invoke(instance, null) : null;
 #else
-                instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current")?.Invoke(instance, null)
+                return instance.Type.GetMethod("System.Collections.Generic.IEnumerator.get_Current")?.Invoke(instance, null);
 #endif
             }
         }
@@ -36,7 +36,7 @@ namespace System.Collections
 #if API_NET35
             return instance.Type.GetMethod("MoveNext") != null ? (bool)instance.Type.GetMethod("MoveNext").Invoke(instance, null) : true;
 #else
-            (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null)
+            return (bool)instance.Type.GetMethod("MoveNext")?.Invoke(instance, null);
 #endif
         }
 

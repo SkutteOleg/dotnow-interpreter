@@ -140,12 +140,8 @@ namespace dotnow.Reflection
             // Get static value
             return staticValue;
         }
-
-#if API_NET35
+        
         internal void GetValueStack(StackData obj, ref StackData value)
-#else
-        internal void GetValueStack(in StackData obj, ref StackData value)
-#endif
         {
             // Make sure type is initialized
             declaringType.StaticInitializeType();

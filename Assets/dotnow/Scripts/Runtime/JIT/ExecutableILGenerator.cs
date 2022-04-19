@@ -146,11 +146,7 @@ namespace dotnow.Runtime.JIT
         }
         #endregion
 
-#if API_NET35
         private void EmitOperation(CILOperation op)
-#else
-        private void EmitOperation(in CILOperation op)
-#endif
         {
             if(dynamic == true)
             {

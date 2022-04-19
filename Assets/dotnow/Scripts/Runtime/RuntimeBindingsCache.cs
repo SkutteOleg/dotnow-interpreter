@@ -1,6 +1,7 @@
 ﻿using dotnow;
 using System;
 using System.Reflection;
+using UnityEngine;
 
 namespace dotnowRuntime
 {
@@ -20,6 +21,15 @@ namespace dotnowRuntime
         }
 
         // Methods
+#if API_NET35
+        public void InvokeProxyMethod(int offset, string methodName, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+        {
+            MethodInfo info = FindProxyMethodInfo(offset, methodName, flags);
+
+            if (info != null)
+                info.Invoke(instance, null);
+        }
+#else
         public void InvokeProxyMethod(int offset, string methodName, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
         {
             Action invoke = FindProxyMethodDelegate(offset, methodName, flags);
@@ -27,6 +37,7 @@ namespace dotnowRuntime
             if (invoke != null)
                 invoke();
         }
+#endif
 
         public object InvokeProxyMethod(int offset, string methodName, object[] args, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
         {
@@ -51,13 +62,27 @@ namespace dotnowRuntime
         private object FindProxyMethodToken(int offset, string methodName, BindingFlags flags)
         {
             object token = proxyMemberCache[offset];
+            Debug.Log(token);
 
             // Check for searched
-            if(token != nullMatchToken)
+            if (token != nullMatchToken && token == null)
             {
                 // try to find the method
                 MethodInfo method = instance.Type.GetMethod(methodName, flags);
 
+#if API_NET35
+                // Check for found
+                if (method != null)
+                {
+                    proxyMemberCache[offset] = method;
+                    token = method;
+                }
+                else
+                {
+                    // Searched for the member and was not found
+                    proxyMemberCache[offset] = nullMatchToken;
+                }
+#else
                 // Check for found
                 if(method != null)
                 {
@@ -81,8 +106,8 @@ namespace dotnowRuntime
                     // Searched for the member and was not found
                     proxyMemberCache[offset] = nullMatchToken;
                 }
+#endif
             }
-
 
             //// Try to find member
             //if(proxyMemberCache.TryGetValue(methodName, out token) == false)

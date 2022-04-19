@@ -85,12 +85,7 @@ namespace dotnow.Runtime
             stackPtr += allocSize;
         }
 
-#if API_NET35
         internal static void __gc_alloc_addr_fld(ref StackData stack, CILFieldAccess field, StackData inst)
-#else
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void __gc_alloc_addr_fld(ref StackData stack, CILFieldAccess field, in StackData inst)
-#endif
         {
             // Push to stack
             stack.refValue = new ByRefField(field, inst);
