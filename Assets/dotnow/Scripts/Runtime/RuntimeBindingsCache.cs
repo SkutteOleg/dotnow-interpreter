@@ -1,7 +1,6 @@
 ﻿using dotnow;
 using System;
 using System.Reflection;
-using UnityEngine;
 
 namespace dotnowRuntime
 {
@@ -62,7 +61,6 @@ namespace dotnowRuntime
         private object FindProxyMethodToken(int offset, string methodName, BindingFlags flags)
         {
             object token = proxyMemberCache[offset];
-            Debug.Log(token);
 
             // Check for searched
             if (token != nullMatchToken && token == null)
