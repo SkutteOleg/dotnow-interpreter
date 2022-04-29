@@ -65,11 +65,8 @@ namespace dotnow
                 {
                     InitializeProxyBindings(type);
                     InitializeMethodBindings(type);
-
-#if !API_NET35
                     InitializeMethodDirectCallBindings(type);
                     InitializeFieldDirectAccessBindings(type);
-#endif
                     InitializeCreateInstanceBindings(type);
                 }
             }
@@ -257,7 +254,6 @@ namespace dotnow
             }
         }
 
-#if !API_NET35
         private void InitializeMethodDirectCallBindings(Type type)
         {
             // Check for proxy methods
@@ -324,7 +320,12 @@ namespace dotnow
                     }
 
                     // Create delegate
-                    AppDomain.MethodDirectCallDelegate handler = (AppDomain.MethodDirectCallDelegate)((MethodInfo)method).CreateDelegate(typeof(AppDomain.MethodDirectCallDelegate), null);
+                    AppDomain.MethodDirectCallDelegate handler = 
+#if !API_NET35
+                        (AppDomain.MethodDirectCallDelegate)((MethodInfo)method).CreateDelegate(typeof(AppDomain.MethodDirectCallDelegate), null);
+#else
+                        (AppDomain.MethodDirectCallDelegate)Delegate.CreateDelegate(typeof(AppDomain.MethodDirectCallDelegate), (MethodInfo)method);
+#endif
 
                     // Check for already added
                     if (clrMethodDirectCallBindings.ContainsKey(delegateMethod) == true)
@@ -413,7 +414,12 @@ namespace dotnow
                     }
 
                     // Create delegate
-                    AppDomain.FieldDirectAccessDelegate handler = (AppDomain.FieldDirectAccessDelegate)((MethodInfo)method).CreateDelegate(typeof(AppDomain.FieldDirectAccessDelegate), null);
+                    AppDomain.FieldDirectAccessDelegate handler = 
+#if !API_NET35
+                        (AppDomain.FieldDirectAccessDelegate)((MethodInfo)method).CreateDelegate(typeof(AppDomain.FieldDirectAccessDelegate), null);
+#else
+                        (AppDomain.FieldDirectAccessDelegate)Delegate.CreateDelegate(typeof(AppDomain.FieldDirectAccessDelegate), (MethodInfo)method);
+#endif
 
                     // Register the accessor
                     if (attribute.FieldAccessMode == CLRFieldAccessMode.Read)
@@ -449,7 +455,6 @@ namespace dotnow
                 }
             }
         }
-#endif
 
         private void InitializeCreateInstanceBindings(Type type)
         {
