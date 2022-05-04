@@ -99,7 +99,7 @@ namespace RoslynCSharp
         }
 
         // Methods
-        public override T GetInstanceAs<T>(bool throwOnError, T errorValue = default)
+        public override T GetInstanceAs<T>(bool throwOnError, T errorValue = default(T))
         {
             // Try a direct cast
             if (throwOnError == true)

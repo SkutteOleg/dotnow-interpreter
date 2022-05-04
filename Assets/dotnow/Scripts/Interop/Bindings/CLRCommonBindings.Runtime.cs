@@ -50,7 +50,11 @@ namespace dotnow.Interop
             for(int i = 0; i < array.Length; i++)
             {
                 // Calcualte pointer for element data
+#if !API_NET35
                 IntPtr ptr = basePtr + localPtr;
+#else
+                IntPtr ptr = (IntPtr)((int)basePtr + localPtr);
+#endif
 
                 // Convert to assignable object - boxing is not ideal but is the only way
                 object inst = Marshal.PtrToStructure(ptr, elementType);
