@@ -15,6 +15,8 @@ using dotnow.Runtime.CIL;
 using System.Runtime.CompilerServices;
 using dotnow.Runtime.JIT;
 
+[assembly: InternalsVisibleTo("dotnow.Integration")]
+
 namespace dotnow
 {
     public class AppDomain : IDisposable
@@ -1097,6 +1099,9 @@ namespace dotnow
         public Type GetCLRProxyBindingForType(Type type, bool throwOnError = true)
         {
             Type bindingProxy;
+
+            // If type is multi inheritance then move down the hierarchy to select the first interop base type
+            type = type.GetInteropBaseType();
 
             // Try to find type
             if (bindings.clrProxyBindings.TryGetValue(type, out bindingProxy) == true)

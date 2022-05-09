@@ -1,5 +1,5 @@
 {
-    "name": "dotnow",
+    "name": "dotnow.Integration",
     "rootNamespace": "",
     "references": [
         "RoslynCSharp",
