@@ -1,15 +1,11 @@
 {
     "name": "dotnow.Examples",
     "references": [
-        "dotnow"
+        "dotnow",
+        "dotnow.Integration"
     ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+    "allowUnsafeCode": false
 }

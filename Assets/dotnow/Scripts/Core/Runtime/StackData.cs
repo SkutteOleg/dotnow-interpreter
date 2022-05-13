@@ -393,7 +393,7 @@ namespace dotnow.Runtime
             }
         }
 
-        public static void AssignKeepType(ref StackData dest, in StackData src)
+        public static void AssignKeepType(ref StackData dest, StackData src)
         {
             // Get existing type
             ObjectType type = dest.type;
