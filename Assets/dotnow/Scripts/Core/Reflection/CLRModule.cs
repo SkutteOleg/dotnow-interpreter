@@ -10,7 +10,11 @@ using dotnow.Runtime.JIT;
 
 namespace dotnow.Reflection
 {
+#if API_NET35
+    public sealed class CLRModule : IJITOptimizable
+#else
     public sealed class CLRModule : Assembly, IJITOptimizable
+#endif
     {
         // Private
         private AppDomain domain = null;
