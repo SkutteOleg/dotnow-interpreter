@@ -101,11 +101,7 @@ namespace dotnow.Runtime
             return UnboxAsType(code);
         }
 
-#if API_NET35
         public object UnboxAsType(CLRTypeInfo typeInfo)
-#else
-        public object UnboxAsType(in CLRTypeInfo typeInfo)
-#endif
         {
             // Check for enum type
             if (typeInfo.typeCode == TypeCode.Object && typeInfo.isEnum == true && typeInfo.isArray == false)
@@ -200,11 +196,7 @@ namespace dotnow.Runtime
             AllocTyped(ref obj, code, value);
         }
 
-#if API_NET35
         public static void AllocTyped(ref StackData obj, CLRTypeInfo typeInfo, object value)
-#else
-        public static void AllocTyped(ref StackData obj, in CLRTypeInfo typeInfo, object value)
-#endif
         {
             // Check for enum
             if(typeInfo.typeCode == TypeCode.Object && typeInfo.isEnum == true && typeInfo.isArray == false)
@@ -401,11 +393,7 @@ namespace dotnow.Runtime
             }
         }
 
-#if API_NET35
         public static void AssignKeepType(ref StackData dest, StackData src)
-#else
-        public static void AssignKeepType(ref StackData dest, in StackData src)
-#endif
         {
             // Get existing type
             ObjectType type = dest.type;

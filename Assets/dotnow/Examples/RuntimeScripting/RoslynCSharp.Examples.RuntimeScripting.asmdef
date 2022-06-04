@@ -1,18 +1,13 @@
 {
     "name": "RoslynCSharp.Examples.RuntimeScripting",
-    "rootNamespace": "",
     "references": [
         "dotnow",
+        "RoslynCSharp",
         "RoslynCSharp.Compiler",
-        "RoslynCSharp"
+        "dotnow.Integration"
     ],
+    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+    "allowUnsafeCode": false
 }
