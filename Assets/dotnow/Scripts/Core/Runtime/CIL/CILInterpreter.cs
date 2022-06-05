@@ -2830,6 +2830,9 @@ namespace dotnow.Runtime.CIL
                                     if (methodInvoke.isCLRMethod == false)
                                         arguments[i] = arguments[i].UnwrapAs(signature.parameterTypes[i]);
                                     
+                                    //Check for delegate
+                                    if (typeof(Delegate).IsAssignableFrom(signature.parameterTypes[i])) 
+                                        arguments[i] = Delegate.CreateDelegate(signature.parameterTypes[i], (arguments[i] as Delegate).Target, (arguments[i] as Delegate).Method);
                                 }
                             }
 
