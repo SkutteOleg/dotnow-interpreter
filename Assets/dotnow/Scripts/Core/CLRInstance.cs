@@ -25,7 +25,7 @@ namespace dotnow
             get { return type; }
         }
 
-        private ICLRProxy InteropProxy
+        public ICLRProxy InteropProxy
         {
             get { return baseProxy as ICLRProxy; }
         }
