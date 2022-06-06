@@ -1,19 +1,20 @@
 ﻿#if ROSLYNCSHARP
 using System.Collections.Generic;
-using dotnow;
+using System.IO;
+using RoslynCSharp;
 using UnityEngine;
 
-namespace RoslynCSharp.Example
+namespace dotnow.Examples.RuntimeScripting
 {
     public class RuntimeScripting : MonoBehaviour
     {
-        private ScriptProxy activeScript = null;
-        private ScriptDomain domain = null;
+        private ScriptProxy activeScript;
+        private ScriptDomain domain;
 
         public AssemblyReferenceAsset[] assemblyReferences;
-        [TextArea(5,50)]
-        public string cSharpSource =
-@"using UnityEngine;
+
+        [TextArea(5, 50)] public string cSharpSource =
+            @"using UnityEngine;
 
 public class TestClass : MonoBehaviour {
 
@@ -22,6 +23,8 @@ public class TestClass : MonoBehaviour {
 
 	}
 }";
+
+        public bool saveAssemblyImage;
 
         public void Start()
         {
@@ -32,7 +35,11 @@ public class TestClass : MonoBehaviour {
 
         public void RunScript()
         {
-            ScriptType type = domain.CompileAndLoadMainSourceInterpreted(cSharpSource, ScriptSecurityMode.UseSettings, assemblyReferences );
+            var assembly = domain.CompileAndLoadSourceInterpreted(cSharpSource, ScriptSecurityMode.UseSettings, assemblyReferences);
+            if (saveAssemblyImage)
+                File.WriteAllBytes($"{Application.dataPath}/dotnow/Examples/RuntimeScripting/AssemblyImages/{assembly.Name}.dll.txt", assembly.AssemblyImage);
+            ScriptType type = assembly.MainType;
+
 
             if (type != null)
             {
@@ -44,29 +51,29 @@ public class TestClass : MonoBehaviour {
 
                 activeScript = type.CreateInstance(gameObject);
                 LoadStateRecursively(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
-                _state.Clear();
+                state.Clear();
             }
         }
 
-        private string _path;
-        private Dictionary<string, object> _state = new Dictionary<string, object>();
+        private string path;
+        private readonly Dictionary<string, object> state = new Dictionary<string, object>();
 
         private bool SaveStateRecursively(CLRInstance obj)
         {
             if (obj == null)
                 return false;
-            
+
             foreach (var field in obj.Type.GetFields())
             {
-                string oldPath = _path;
-                _path += string.Format(".{0}", field.Name);
+                string oldPath = path;
+                path += string.Format(".{0}", field.Name);
 
                 if (field.FieldType.IsCLRType())
-                    _state[_path] = SaveStateRecursively((CLRInstance) field.GetValue(obj));
+                    state[path] = SaveStateRecursively((CLRInstance)field.GetValue(obj));
                 else
-                    _state[_path] = field.GetValue(obj);
+                    state[path] = field.GetValue(obj);
 
-                _path = oldPath;
+                path = oldPath;
             }
 
             return true;
@@ -76,28 +83,28 @@ public class TestClass : MonoBehaviour {
         {
             foreach (var field in obj.Type.GetFields())
             {
-                string oldPath = _path;
-                _path += string.Format(".{0}", field.Name);
-                
-                if (!_state.ContainsKey(_path))
+                string oldPath = path;
+                path += string.Format(".{0}", field.Name);
+
+                if (!state.ContainsKey(path))
                 {
-                    _path = oldPath;
+                    path = oldPath;
                     continue;
                 }
 
                 if (field.FieldType.IsCLRType())
                 {
-                    if ((bool) _state[_path])
+                    if ((bool)state[path])
                     {
-                        CLRInstance instance = (CLRInstance) AppDomain.Active.CreateInstance((CLRType) field.FieldType);
+                        CLRInstance instance = (CLRInstance)AppDomain.Active.CreateInstance((CLRType)field.FieldType);
                         field.SetValue(obj, instance);
                         LoadStateRecursively(instance);
                     }
                 }
-                else if (field.FieldType.IsInstanceOfType(_state[_path]))
-                    field.SetValue(obj, _state[_path]);
+                else if (field.FieldType.IsInstanceOfType(state[path]))
+                    field.SetValue(obj, state[path]);
 
-                _path = oldPath;
+                path = oldPath;
             }
         }
     }

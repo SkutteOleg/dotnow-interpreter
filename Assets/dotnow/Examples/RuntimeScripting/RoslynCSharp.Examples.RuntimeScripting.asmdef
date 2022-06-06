@@ -1,5 +1,5 @@
 {
-    "name": "RoslynCSharp.Examples.RuntimeScripting",
+    "name": "dotnow.Examples.RuntimeScripting",
     "references": [
         "dotnow",
         "RoslynCSharp",
