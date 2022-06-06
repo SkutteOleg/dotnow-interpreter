@@ -1,6 +1,7 @@
 ﻿#if ROSLYNCSHARP
 using System.Collections.Generic;
 using System.IO;
+using dotnow.Interop;
 using RoslynCSharp;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ public class TestClass : MonoBehaviour {
 	}
 }";
 
+        public bool interpreted = true;
         public bool saveAssemblyImage;
 
         public void Start()
@@ -35,7 +37,8 @@ public class TestClass : MonoBehaviour {
 
         public void RunScript()
         {
-            var assembly = domain.CompileAndLoadSourceInterpreted(cSharpSource, ScriptSecurityMode.UseSettings, assemblyReferences);
+            var assembly = interpreted ? domain.CompileAndLoadSourceInterpreted(cSharpSource, ScriptSecurityMode.UseSettings, assemblyReferences) : domain.CompileAndLoadSource(cSharpSource, ScriptSecurityMode.UseSettings, assemblyReferences);
+
             if (saveAssemblyImage)
                 File.WriteAllBytes($"{Application.dataPath}/dotnow/Examples/RuntimeScripting/AssemblyImages/{assembly.Name}.dll.txt", assembly.AssemblyImage);
             ScriptType type = assembly.MainType;
@@ -45,12 +48,16 @@ public class TestClass : MonoBehaviour {
             {
                 if (activeScript != null)
                 {
-                    SaveStateRecursively(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
-                    DestroyImmediate(activeScript.GetInstanceAs<MonoBehaviour>(false));
+                    if (activeScript.Instance is ICLRProxy == interpreted)
+                        SaveStateRecursively(interpreted ? activeScript.GetInstanceAs<ICLRProxy>(true).GetInstance() : activeScript.Instance);
+                    Destroy(activeScript.GetInstanceAs<MonoBehaviour>(false));
                 }
 
                 activeScript = type.CreateInstance(gameObject);
-                LoadStateRecursively(activeScript.GetInstanceAs<MonoBehaviourProxy>(true).GetInstance());
+                
+                if (activeScript.Instance is ICLRProxy == interpreted)
+                    LoadStateRecursively(interpreted ? activeScript.GetInstanceAs<ICLRProxy>(true).GetInstance() : activeScript.Instance);
+
                 state.Clear();
             }
         }
@@ -58,12 +65,12 @@ public class TestClass : MonoBehaviour {
         private string path;
         private readonly Dictionary<string, object> state = new Dictionary<string, object>();
 
-        private bool SaveStateRecursively(CLRInstance obj)
+        private bool SaveStateRecursively(object obj)
         {
             if (obj == null)
                 return false;
 
-            foreach (var field in obj.Type.GetFields())
+            foreach (var field in interpreted ? ((CLRInstance)obj).Type.GetFields() : obj.GetType().GetFields())
             {
                 string oldPath = path;
                 path += string.Format(".{0}", field.Name);
@@ -79,9 +86,9 @@ public class TestClass : MonoBehaviour {
             return true;
         }
 
-        private void LoadStateRecursively(CLRInstance obj)
+        private void LoadStateRecursively(object obj)
         {
-            foreach (var field in obj.Type.GetFields())
+            foreach (var field in interpreted ? ((CLRInstance)obj).Type.GetFields() : obj.GetType().GetFields())
             {
                 string oldPath = path;
                 path += string.Format(".{0}", field.Name);
