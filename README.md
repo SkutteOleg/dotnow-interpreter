@@ -1,3 +1,4 @@
+This fork focuses on maintaining compatibility with .NET 3.5, C# 6.0 and Unity 2018.2.20f1.
 # dotnow Interpreter
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
