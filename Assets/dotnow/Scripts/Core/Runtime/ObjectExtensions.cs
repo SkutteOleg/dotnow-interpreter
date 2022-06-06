@@ -28,6 +28,10 @@ namespace dotnow
             if (instance is CLRInstance)
                 return ((CLRInstance)instance).Type;
 
+            // Get clr type for proxy
+            if (instance is Interop.ICLRProxy)
+                return ((Interop.ICLRProxy)instance).GetInstance().Type;
+
             return instance.GetType();
         }
 

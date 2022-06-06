@@ -795,8 +795,12 @@ namespace dotnow.Runtime.CIL
                                 Type instType = inst.GetInterpretedType();
 
                                 // Check for equal or assignable (May need more work to support interfaces??)
-                                if(castType.type == instType || instType.IsSubclassOf(castType.type) == true)
+                                if (castType.type == instType || instType.IsSubclassOf(castType.type) == true)
                                 {
+                                    // Convert proxy to interpreted instance
+                                    if (inst is Interop.ICLRProxy)
+                                        temp.refValue = (inst as Interop.ICLRProxy).GetInstance();
+
                                     // Push object
                                     stack[stackPtr++] = temp;
                                 }
