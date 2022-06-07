@@ -28,7 +28,7 @@ namespace dotnow.Examples.RuntimeScripting
                 {
 
                     SaveStateRecursively(activeScript);
-                    DestroyImmediate((Object)activeScript.InteropProxy);
+                    Destroy((Object)activeScript.InteropProxy);
                 }
                 
                 activeScript = (CLRInstance)MonoBehaviourProxy.AddComponentOverride(domain, null, gameObject, new object[] { type });
