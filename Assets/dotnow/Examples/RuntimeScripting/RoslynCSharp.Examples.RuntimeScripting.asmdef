@@ -2,8 +2,6 @@
     "name": "dotnow.Examples.RuntimeScripting",
     "references": [
         "dotnow",
-        "RoslynCSharp",
-        "RoslynCSharp.Compiler",
         "dotnow.Integration"
     ],
     "optionalUnityReferences": [],

@@ -1,9 +1,7 @@
 {
     "name": "dotnow.Integration",
     "references": [
-        "dotnow",
-        "RoslynCSharp",
-        "RoslynCSharp.Compiler"
+        "dotnow"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
