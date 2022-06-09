@@ -3,6 +3,7 @@ using dotnow.Interop;
 
 namespace System.Collections.Generic
 {
+    [UnityEngine.Scripting.Preserve]
     [CLRProxyBinding(typeof(IEnumerator<object>))]
     public class IEnumerator_Object_Proxy : ICLRProxy, IEnumerator<object>
     {

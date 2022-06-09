@@ -1693,77 +1693,77 @@ namespace dotnow.Runtime.CIL
 #region Indirect
                     case Code.Ldind_I:
                         {
-                            stack[stackPtr - 1].value.Int32 = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueI4();
+                            stack[stackPtr - 1].value.Int32 = (int)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Int32;
                             break;
                         }
 
                     case Code.Ldind_I1:
                         {
-                            stack[stackPtr - 1].value.Int8 = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueI1();
+                            stack[stackPtr - 1].value.Int8 = (sbyte)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Int8;
                             break;
                         }
 
                     case Code.Ldind_I2:
                         {
-                            stack[stackPtr - 1].value.Int16 = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueI2();
+                            stack[stackPtr - 1].value.Int16 = (short)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Int16;
                             break;
                         }
 
                     case Code.Ldind_I4:
                         {
-                            stack[stackPtr - 1].value.Int32 = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueI4();
+                            stack[stackPtr - 1].value.Int32 = (int)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Int32;
                             break;
                         }
 
                     case Code.Ldind_I8:
                         {
-                            stack[stackPtr - 1].value.Int64 = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueI8();
+                            stack[stackPtr - 1].value.Int64 = (long)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Int64;
                             break;
                         }
 
                     case Code.Ldind_R4:
                         {
-                            stack[stackPtr - 1].value.Single = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueR4();
+                            stack[stackPtr - 1].value.Single = (float)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Single;
                             break;
                         }
 
                     case Code.Ldind_R8:
                         {
-                            stack[stackPtr - 1].value.Double = ((IByRef)stack[--stackPtr].refValue).GetReferenceValueR8();
+                            stack[stackPtr - 1].value.Double = (double)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Double;
                             break;
                         }
 
                     case Code.Ldind_U1:
                         {
-                            stack[stackPtr - 1].value.Int8 = (sbyte)((IByRef)stack[--stackPtr].refValue).GetReferenceValueU1();
+                            stack[stackPtr - 1].value.Int8 = (sbyte)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.UInt8;
                             break;
                         }
 
                     case Code.Ldind_U2:
                         {
-                            stack[stackPtr - 1].value.Int16 = (short)((IByRef)stack[--stackPtr].refValue).GetReferenceValueU2();
+                            stack[stackPtr - 1].value.Int16 = (short)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.UInt16;
                             break;
                         }
 
                     case Code.Ldind_U4:
                         {
-                            stack[stackPtr - 1].value.Int32 = (int)((IByRef)stack[--stackPtr].refValue).GetReferenceValueU4();
+                            stack[stackPtr - 1].value.Int32 = (int)stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.UInt32;
                             break;
                         }
 
                     case Code.Ldind_Ref:
                         {
-                            stack[stackPtr - 1].refValue = ((IByRef)stack[--stackPtr].refValue).GetReferenceValue();
+                            stack[stackPtr - 1].refValue = stack[--stackPtr].Box();
                             stack[stackPtr++].type = StackData.ObjectType.Ref;
                             break;
                         }
@@ -2876,8 +2876,18 @@ namespace dotnow.Runtime.CIL
                                 if (@ref != null)
                                     instance = @ref.GetReferenceValue().UnboxAsType(Type.GetTypeCode(targetMethod.DeclaringType));//.Box();
 
-                                // Now we can invoke the method safely
-                                invocationResult = targetMethod.Invoke(instance, arguments);
+                                try
+                                {
+                                    // Now we can invoke the method safely
+                                    invocationResult = targetMethod.Invoke(instance, arguments);
+                                }
+                                catch
+                                {
+                                    // Nasty temporary hack
+                                    // TODO: Figure out the root cause of the problem
+                                    instance = stack[argOffset + 1].Box();
+                                    invocationResult = targetMethod.Invoke(instance, arguments);
+                                }
                             }
 
 

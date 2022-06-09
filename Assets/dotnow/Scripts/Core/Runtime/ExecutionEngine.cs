@@ -181,6 +181,7 @@ namespace dotnow.Runtime
 #if (UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID || UNITY_WSA || UNITY_WEBGL)
                     UnityEngine.Debug.LogError("At method body: " + ((frame.Method != null) ? frame.Method.ToString() : "<Unknown>"));
                     UnityEngine.Debug.LogError("At instruction: " + ((frame.instructionPtr < methodInstructions.Length) ? methodInstructions[frame.instructionPtr].ToString() : "<Unknown>"));
+                    UnityEngine.Debug.LogError(e.Message + "\n" + e.StackTrace);
 #endif
 #endif
                     // Reset call frame
@@ -190,7 +191,7 @@ namespace dotnow.Runtime
                     // Handle any exceptions
                     switch (HandleException(domain, frame, methodInstructions, exceptionHandlers, e))
                     {
-                        case ExceptionHandlingResult.Rethrow: throw;
+                        case ExceptionHandlingResult.Rethrow: return;
                         case ExceptionHandlingResult.Continue: continue;
                         case ExceptionHandlingResult.Return: return;
                     }

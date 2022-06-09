@@ -9,6 +9,7 @@ using AppDomain = dotnow.AppDomain;
 
 namespace UnityEngine
 {
+    [UnityEngine.Scripting.Preserve]
 #if API_NET35
     [CLRProxyBinding(typeof(MonoBehaviour))]
     public class MonoBehaviourProxy : MonoBehaviour, ICLRProxy

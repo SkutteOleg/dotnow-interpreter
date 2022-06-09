@@ -3,6 +3,7 @@ using dotnow.Interop;
 
 namespace System
 {
+    [UnityEngine.Scripting.Preserve]
     [CLRProxyBinding(typeof(IDisposable))]
     public class IDisposableProxy : ICLRProxy, IDisposable
     {

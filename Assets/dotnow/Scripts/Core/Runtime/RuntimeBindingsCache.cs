@@ -21,15 +21,20 @@ namespace dotnowRuntime
 
         // Methods
 #if API_NET35
-        public void InvokeProxyMethod(int offset, string methodName, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+        public bool InvokeProxyMethod(int offset, string methodName, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
         {
             MethodInfo info = FindProxyMethodInfo(offset, methodName, flags);
 
             if (info != null)
+            {
                 info.Invoke(instance, null);
+                return true;
+            }
+
+            return false;
         }
 #else
-        public void InvokeProxyMethod(int offset, string methodName, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+        public void InvokeProxyMethod(int offset, string methodName, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
         {
             Action invoke = FindProxyMethodDelegate(offset, methodName, flags);
 
@@ -38,7 +43,7 @@ namespace dotnowRuntime
         }
 #endif
 
-        public object InvokeProxyMethod(int offset, string methodName, object[] args, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+        public object InvokeProxyMethod(int offset, string methodName, object[] args, BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
         {
             MethodInfo info = FindProxyMethodInfo(offset, methodName, flags);
 
