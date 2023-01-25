@@ -1,10 +1,12 @@
 {
-    "name": "dotnow.Examples",
+    "name": "dotnow.Tools",
+    "rootNamespace": "",
     "references": [
-        "GUID:f656afbb727c4e8418169dff952bc121",
-        "GUID:75b58d7930f6c0f40aee3135b22e732d"
+        "GUID:f656afbb727c4e8418169dff952bc121"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

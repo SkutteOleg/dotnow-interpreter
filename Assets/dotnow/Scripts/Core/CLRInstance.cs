@@ -180,6 +180,7 @@ namespace dotnow
             value = fields[fieldOffset];
         }
 
+        public Action<CLRField, object> OnSetFieldValue;
 
         public void SetFieldValue(CLRField field, object value)
         {
@@ -190,6 +191,8 @@ namespace dotnow
 
             // Set field value
             StackData.AllocTypedSlow(ref fields[fieldOffset + fieldPtr], field.FieldType, value, true);
+            
+            OnSetFieldValue?.Invoke(field, value);
         }
 
         public override string ToString()

@@ -183,9 +183,12 @@ namespace dotnow.Runtime
                 {
 #if !UNITY_DISABLE
 #if (UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_ANDROID || UNITY_WSA || UNITY_WEBGL || UNITY_SWITCH)
-                    UnityEngine.Debug.LogError("Execution Error: " + e.Message);
-                    UnityEngine.Debug.LogError("At method body: " + ((frame.Method != null) ? frame.Method.ToString() : "<Unknown>"));
-                    UnityEngine.Debug.LogError("At instruction: " + ((frame.instructionPtr < methodInstructions.Length) ? methodInstructions[frame.instructionPtr].ToString() : "<Unknown>"));
+                    UnityEngine.Debug.LogFormat(UnityEngine.LogType.Error, UnityEngine.LogOption.NoStacktrace, null, "Execution Error: " + e.Message);
+                    UnityEngine.Debug.LogFormat(UnityEngine.LogType.Error, UnityEngine.LogOption.NoStacktrace, null, "At method body: " + ((frame.Method != null) ? frame.Method.ToString() : "<Unknown>"));
+                    UnityEngine.Debug.LogFormat(UnityEngine.LogType.Error, UnityEngine.LogOption.NoStacktrace, null, "At instruction: " + ((frame.instructionPtr < methodInstructions.Length) ? methodInstructions[frame.instructionPtr].ToString() : "<Unknown>"));
+#if UNITY_EDITOR
+                    UnityEngine.Debug.LogFormat(UnityEngine.LogType.Error, UnityEngine.LogOption.NoStacktrace, null, "Stack Trace: " + e.StackTrace);
+#endif
 #endif
 #endif
                     // Reset call frame
@@ -195,7 +198,11 @@ namespace dotnow.Runtime
                     // Handle any exceptions
                     switch (HandleException(domain, frame, methodInstructions, exceptionHandlers, e))
                     {
+#if UNITY_EDITOR
                         case ExceptionHandlingResult.Rethrow: throw;
+#else
+                        case ExceptionHandlingResult.Rethrow: break;
+#endif
                         case ExceptionHandlingResult.Continue: continue;
                         case ExceptionHandlingResult.Return: return;
                     }
@@ -220,7 +227,7 @@ namespace dotnow.Runtime
                 try
                 {
                     CILInterpreter.ExecuteInterpreted(domain, this, ref frame, ref instructions, ref exceptionHandlers, debugFlags);
-                    
+
                     // Check for rethrow
                     if (frame.instructionPtr == rethrowOnReturn)
                         return ExceptionHandlingResult.Rethrow;
@@ -254,11 +261,11 @@ namespace dotnow.Runtime
             CLRExceptionHandler best = null;
 
             // Check all handlers
-            foreach(CLRExceptionHandler handler in exceptionHandlers)
+            foreach (CLRExceptionHandler handler in exceptionHandlers)
             {
-                if(handler.IsMatch(exceptionType, instructionIndex) == true)
+                if (handler.IsMatch(exceptionType, instructionIndex) == true)
                 {
-                    if(handler.IsBetterMatchThan(best) == true)
+                    if (handler.IsBetterMatchThan(best) == true)
                     {
                         best = handler;
                     }
@@ -273,12 +280,13 @@ namespace dotnow.Runtime
             // Check all handlers
             foreach (CLRExceptionHandler handler in exceptionHandlers)
             {
-                if(handler.IsFinally == true && handler.IsMatch(instructionIndex) == true)
+                if (handler.IsFinally == true && handler.IsMatch(instructionIndex) == true)
                 {
                     // Matched handler
                     return handler;
                 }
             }
+
             return null;
         }
 
@@ -360,8 +368,8 @@ namespace dotnow.Runtime
 
             // Append method info
             builder.Append(methodString);
-            
-            if(includeFileInfo == true)
+
+            if (includeFileInfo == true)
             {
                 CLRMethod method = currentMethod as CLRMethod;
                 CILOperation op;
@@ -381,6 +389,7 @@ namespace dotnow.Runtime
                         builder.Append(":");
                         builder.Append(location.lineNumber);
                     }
+
                     builder.Append(")");
                 }
                 else

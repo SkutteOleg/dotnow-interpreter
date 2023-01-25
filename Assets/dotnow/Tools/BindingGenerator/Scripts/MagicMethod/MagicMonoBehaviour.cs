@@ -29,12 +29,6 @@ namespace dotnow.BindingGenerator.MagicMethod
         public void OnTriggerEnter(UnityEngine.Collider other) { }
         public void OnTriggerStay(UnityEngine.Collider other) { }
         public void OnTriggerExit(UnityEngine.Collider other) { }
-        public void OnTriggerEnter2D(UnityEngine.Collider2D collision) { }
-        public void OnTriggerStay2D(UnityEngine.Collider2D collision) { }
-        public void OnTriggerExit2D(UnityEngine.Collider2D collision) { }
-        public void OnCollisionEnter2D(UnityEngine.Collision2D collision) { }
-        public void OnCollisionStay2D(UnityEngine.Collision2D collision) { }
-        public void OnCollisionExit2D(UnityEngine.Collision2D collision) { }
         public void OnControllerColliderHit(UnityEngine.ControllerColliderHit hit) { }        
         
         public void OnMouseDown() { }
