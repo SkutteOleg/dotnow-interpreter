@@ -1182,10 +1182,10 @@ namespace dotnow.Runtime.CIL
                                 case StackData.ObjectType.Null:
                                 case StackData.ObjectType.Ref:
                                 case StackData.ObjectType.RefBoxed:
-                                    {
-                                        if (left.type == StackData.ObjectType.Null)
+                                    {                                      
+                                        if(StackData.NullCheck(left) == true)
                                         {
-                                            flag = (right.type != StackData.ObjectType.Null);
+                                            flag = StackData.NullCheck(right) == false;
                                             break;
                                         }
 
@@ -2728,7 +2728,14 @@ namespace dotnow.Runtime.CIL
 
                     case Code.Throw:
                         {
-                            throw (Exception)stack[--stackPtr].refValue;
+                            // Fetch exception
+                            Exception e = (Exception)stack[--stackPtr].refValue;
+
+                            // Update frame markers
+                            frame.instructionPtr = instructionPtr;
+                            frame.stackIndex = stackPtr;
+
+                            throw e;
                         }
 
                     case Code.Sizeof:

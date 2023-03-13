@@ -249,7 +249,7 @@ namespace RoslynCSharp
             result = new AppDomain();
 
             // Register domain
-            clrDomains.Add(domain, result);
+            clrDomains[domain] = result;
 
             return result;
         }
